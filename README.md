@@ -28,23 +28,23 @@ Note! When you complile apps by yourself don`t forget in compile options:
   <li>Executable format> console</li>
 </ul>
 
-Note! Bitcrack app sholud be put in the same folder as crackhelperClientX64.exe
-If you have few GPU on the same PC put each instance of crackhelperClientX64.exe to new folder(and Bitcrack app)
-How to correct set -dp:
-Job timeout is 1 day. If client do not submit job in 1 day, job will be deleted.
-So the width of the subrange should be such that it can be solved in 1 day maximum by 1 instance client.
-For ex your gpu can calculate 2^30 keys/s 
-In this case for 2.5h  gpu can calculate 2^43keys
-If your whole range is 2^63 than devide 2^63 / 2^43 = 2^20
-So -dp 20, mean devide whole range into 1048576(2^20) subranges and width of each subrange is 2^43.
+Note! Bitcrack app sholud be put in the same folder as crackhelperClientX64.exe\
+If you have few GPU on the same PC put each instance of crackhelperClientX64.exe to new folder(and Bitcrack app)\
+How to correct set -dp:\
+Job timeout is 1 day. If client do not submit job in 1 day, job will be deleted.\
+So the width of the subrange should be such that it can be solved in 1 day maximum by 1 instance client.\
+For ex your gpu can calculate 2^30 keys/s \
+In this case for 2.5h  gpu can calculate 2^43keys\
+If your whole range is 2^63 than devide 2^63 / 2^43 = 2^20\
+So -dp 20, mean devide whole range into 1048576(2^20) subranges and width of each subrange is 2^43.\
 
 ## [merger.exe] is needed to combine the results of work from crackhelperServerX64.
 
-The same ranges and addresses are required in both map files!
-You can combine files with the same -dp
+The same ranges and addresses are required in both map files!\
+You can combine files with the same -dp\
 
-But you can also combine files with different -dp, for ex -dp 20 with -dp 22
-But here it should be remembered that in the saved file dp will be the greatest!
+But you can also combine files with different -dp, for ex -dp 20 with -dp 22\
+But here it should be remembered that in the saved file dp will be the greatest!\
 If you are merge -dp 20 with -dp 22 then merger logic will be:
 <ul>
   <li>copy file with -dp 22 to savingmap file</li>
