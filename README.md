@@ -1,4 +1,5 @@
 ## [crackhelperServer.exe] commands:
+```
 -port N           Listen port N for client connections
 -range begin:end  Using range from begin to end
 -dp N             Divide whole range into 2^N subranges
@@ -6,8 +7,10 @@
 -address ADDR     Address that will be find with bitckrack app.
 -map fileneame    Name of your map file where will be stored subranges key
 Example: crackhelperServerX64.exe -range 8000000000:ffffffffff -dp 5 -map mmm.bin -address 1EeAxcprB2PpCnr34VfZdFrkUWuxyiNEFv
+```
 
 ## [crackhelperClient.exe] commands:
+```
 -prog filename    The name of bitckrack app without exe suffix
 -name  NAME       Instance name for stats on server
 -pool host:port   Server host:port by default 127.0.0.1:8000
@@ -16,6 +19,7 @@ Example: crackhelperServerX64.exe -range 8000000000:ffffffffff -dp 5 -map mmm.bi
 -b N              Number of blocks
 -p N              Number of points per thread
 Example: crackhelperClientX64.exe -prog cuBitCrack.exe -name 2080ti -d 0 -pool 127.0.0.1:8000 -t 256 -b 136 -p 512
+```
 
 Note! When you complile apps by yourself don`t forget in compile options:
 Uncheck > create unicode executable
