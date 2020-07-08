@@ -1,4 +1,4 @@
-[crackhelperServer.exe] commands:
+## [crackhelperServer.exe] commands:
 -port N           Listen port N for client connections
 -range begin:end  Using range from begin to end
 -dp N             Divide whole range into 2^N subranges
@@ -7,7 +7,7 @@
 -map fileneame    Name of your map file where will be stored subranges key
 Example: crackhelperServerX64.exe -range 8000000000:ffffffffff -dp 5 -map mmm.bin -address 1EeAxcprB2PpCnr34VfZdFrkUWuxyiNEFv
 
-[crackhelperClient.exe] commands:
+## [crackhelperClient.exe] commands:
 -prog filename    The name of bitckrack app without exe suffix
 -name  NAME       Instance name for stats on server
 -pool host:port   Server host:port by default 127.0.0.1:8000
@@ -32,7 +32,7 @@ In this case for 2.5h  gpu can calculate 2^43keys
 If your whole range is 2^63 than devide 2^63 / 2^43 = 2^20
 So -dp 20, mean devide whole range into 1048576(2^20) subranges and width of each subrange is 2^43.
 
-[merger.exe] is needed to combine the results of work from crackhelperServerX64.
+## [merger.exe] is needed to combine the results of work from crackhelperServerX64.
 
 The same ranges and addresses are required in both map files!
 You can combine files with the same -dp
