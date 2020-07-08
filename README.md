@@ -22,9 +22,11 @@ Example: crackhelperClientX64.exe -prog cuBitCrack.exe -name 2080ti -d 0 -pool 1
 ```
 
 Note! When you complile apps by yourself don`t forget in compile options:
-Uncheck > create unicode executable
-Check > Create threadsafe executable
-and set Executable format> console
+<ul>
+  <li>Uncheck > create unicode executable</li>
+  <li>Check > Create threadsafe executable</li>
+  <li>Executable format> console</li>
+</ul>
 
 Note! Bitcrack app sholud be put in the same folder as crackhelperClientX64.exe
 If you have few GPU on the same PC put each instance of crackhelperClientX64.exe to new folder(and Bitcrack app)
@@ -44,8 +46,9 @@ You can combine files with the same -dp
 But you can also combine files with different -dp, for ex -dp 20 with -dp 22
 But here it should be remembered that in the saved file dp will be the greatest!
 If you are merge -dp 20 with -dp 22 then merger logic will be:
- copy file with -dp 22 to savingmap file
- copy all scanned subranges from file with -dp 20 to savingmap file
- totaly you will have savingmap file with -dp 22 where already put scanned ranges from file with -dp 20
-
+<ul>
+  <li>copy file with -dp 22 to savingmap file</li>
+  <li>copy all scanned subranges from file with -dp 20 to savingmap file</li>
+  <li>totaly you will have savingmap file with -dp 22 where already put scanned ranges from file with -dp 20</li>
+</ul>
 example of usage > merger.exe mmm.bin mmmmerge.bin mmmsave.bin
