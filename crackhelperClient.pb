@@ -977,4 +977,4 @@ End
 ; Folding = --
 ; EnableThread
 ; EnableXP
-; Executable = crackhelperClientX64.exe
+; Executable = ..\release\v1_0\crackhelperClientX64.exe

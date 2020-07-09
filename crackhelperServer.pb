@@ -31,9 +31,7 @@ EndStructure
 Structure RangeStructure
   id.i
   rb$
-  re$
-  isScan.b
-  isBuzzy.b
+  re$  
 EndStructure
 
 Structure settingsStructure
@@ -80,7 +78,7 @@ EndEnumeration
 #ADDRESSSIZE=34
 #HEADERSIZE=64+#ADDRESSSIZE+1
 #DATASIZE=65
-#APPVERSION="1.0"
+#APPVERSION="1.1"
 
 #DatabaseFile="Personstate.db" 
 
@@ -98,7 +96,7 @@ Define SQLMutex = CreateMutex()
 Define NewList *range_task.RangeStructure();<- holds pointers to all randomly selected map elements
 Define range_mapper.RANGE_MAPPER  ;<- holds pointers to all free map elements
 
-Define NewMap range.RangeStructure(4096)
+Define NewList range.RangeStructure()
 Define *rangeB,*rangeE, currange, isFind=#False, subrangewidth.i
 Define NewList winkeylist.s()
 Define NewMap settings.settingsStructure()
@@ -128,7 +126,7 @@ Procedure.i FillMapper();<- fill the 'stack' (doesnt matter how big the map is)
   Shared range_mapper, range()
   
   With range_mapper
-    index = MapSize(range())
+    index = ListSize(range())
     If index
       \count = index - 1
       Dim \ptr(\count)
@@ -599,10 +597,10 @@ Procedure initrange()
   CopyMemory(*rangeB,*bufferResult,32)
   For i = 0 To settings("1")\deviderint-1
     Curve::m_addX64(*bufferEnd,*buffer,*bufferResult)
-    range(Str(i))\id = i
-    range(Str(i))\isScan=0
-    range(Str(i))\rb$=m_gethex32(*bufferResult, settings("1")\maxbyte)
-    range(Str(i))\re$=m_gethex32(*bufferEnd, settings("1")\maxbyte)
+    AddElement(range())
+    range()\id = i
+    range()\rb$=m_gethex32(*bufferResult, settings("1")\maxbyte)
+    range()\re$=m_gethex32(*bufferEnd, settings("1")\maxbyte)
     
     Curve::m_addX64(*bufferResult,*bufferEnd,*one)
     If Not i%10000
@@ -632,19 +630,20 @@ Procedure savenewmap()
     PokeB(*MemoryBuffer,isFind) ;is not found
     WriteData(#File, *MemoryBuffer, 1)
     
-    For i = 0 To settings("1")\deviderint-1
-      m_sethex32(*MemoryBuffer, @range(Str(i))\rb$, 32)
+    ResetList(range())
+    While NextElement(range())
+      m_sethex32(*MemoryBuffer, @range()\rb$, 32)
       WriteData(#File, *MemoryBuffer, 32)
       
-      m_sethex32(*MemoryBuffer, @range(Str(i))\re$, 32)
+      m_sethex32(*MemoryBuffer, @range()\re$, 32)
       WriteData(#File, *MemoryBuffer, 32)
       
-      PokeB(*MemoryBuffer,range(Str(i))\isScan)
+      PokeB(*MemoryBuffer,0)
       WriteData(#File, *MemoryBuffer, 1)
       If Not i%10000
         Print(Chr(8)+Chr(8)+Chr(8)+Chr(8)+Chr(8)+Chr(8)+Chr(8)+Chr(8)+Chr(8)+Chr(8)+Chr(8)+Chr(8)+Chr(8)+Chr(8)+Chr(8)+Chr(8)+Chr(8)+Chr(8)+Str(i))
       EndIf
-    Next i
+    Wend
     PrintN("")
     CloseFile(#File)
   EndIf
@@ -730,10 +729,10 @@ Procedure loadmap()
             ;ew don`t need this data anymore
             totalscanned+1
           Else
-            range(Str(i))\id = i
-            range(Str(i))\rb$ = m_gethex32(*MemoryBuffer, settings("1")\maxbyte) 
-            range(Str(i))\re$ = m_gethex32(*MemoryBuffer+32, settings("1")\maxbyte) 
-            range(Str(i))\isScan = 0
+            AddElement(range())
+            range()\id = i
+            range()\rb$ = m_gethex32(*MemoryBuffer, settings("1")\maxbyte) 
+            range()\re$ = m_gethex32(*MemoryBuffer+32, settings("1")\maxbyte)
             Debug "range("+Str(i)+") not scanned"
             
           EndIf
@@ -759,7 +758,7 @@ EndProcedure
 
 Procedure updatemap(nline) 
   Protected err=0, i, buf$, bufb$,bufend$, bufaddr$, *MemoryBuffer=AllocateMemory(#HEADERSIZE), pos, procname$ = "[UPDATEMAP] "
-  Shared range(), settings() 
+  Shared range(), settings()
   
   If Not OpenFile(#File, settings("1")\mapFilename$ ,#PB_File_SharedRead)   
       Sprint( "Can`t open "+settings("1")\mapFilename$+" map file", #colorRed)
@@ -787,8 +786,9 @@ Procedure updatemap(nline)
       If Not err
         pos=#HEADERSIZE+#DATASIZE*nline+#DATASIZE-1
         FileSeek(#File, pos ,#PB_Absolute)
-                
-        PokeB(*MemoryBuffer,range(Str(nline))\isScan)
+        
+        
+        PokeB(*MemoryBuffer,1)
         WriteData(#File, *MemoryBuffer, 1)
       Else
         Sprint(procname$+ "Invalid header", #colorRed)
@@ -1153,7 +1153,7 @@ Procedure AnaliseRequest(reqid)
             If res
               If res&1
                 LockMutex(RndMutex)
-                range(Str(job(hash$)\rangeid))\isScan=1          
+
                 If updatemap(job(hash$)\rangeid)
                   Sprint("Can`t update map!",#colorRed)
                 Else
@@ -1469,7 +1469,7 @@ If cmpmapfile()
     End
   EndIf
   If FileSize(#DatabaseFile)>0
-    sprint("Clear "+#DatabaseFile+" db file, due to new map file", #colorBrown)
+    sprint("Clear "+#DatabaseFile+" file, due to new map file", #colorBrown)
     DeleteFile(#DatabaseFile, #PB_FileSystem_Force)
   EndIf
 Else
@@ -1487,7 +1487,7 @@ If isFind=#True
   End
 EndIf
 FillMapper()
-Sprint(procname$+"Total ranges: "+Str(settings("1")\deviderint)+" scanned: "+Str(totalscanned)+" left: "+Str(MapSize(range()))+" ["+Str(range_mapper\count)+"]", #colorDefault)
+Sprint(procname$+"Total ranges: "+Str(settings("1")\deviderint)+" scanned: "+Str(totalscanned)+" left: "+Str(range_mapper\count+1), #colorDefault)
 
 
 Sprint(procname$+"Press any key to continue",#colorWhite)  
@@ -1519,7 +1519,7 @@ While isFind=#False
     If local_totalbazzy<>ListSize(*range_task()) Or local_totalscanned<>totalscanned
       local_totalbazzy = ListSize(*range_task())
       local_totalscanned = totalscanned
-      Sprint(procname$+"Buzzy["+Str(local_totalbazzy)+"] Scanned ["+Str(local_totalscanned)+"] Total ["+Str(settings("1")\deviderint)+"] Left ["+Str(settings("1")\deviderint-local_totalscanned)+"]",#colorDefault)      
+      Sprint(procname$+"Buzzy["+Str(local_totalbazzy)+"] Scanned["+Str(local_totalscanned)+"] Total["+Str(settings("1")\deviderint)+"] Left["+Str(settings("1")\deviderint-local_totalscanned)+"]",#colorDefault)      
     EndIf
   EndIf
 Wend
@@ -1528,8 +1528,8 @@ Input()
 End
 ; IDE Options = PureBasic 5.31 (Windows - x64)
 ; ExecutableFormat = Console
-; CursorPosition = 1443
-; FirstLine = 1416
+; CursorPosition = 1521
+; FirstLine = 1486
 ; Folding = ------
 ; EnableXP
 ; Executable = crackhelperServerX64.exe

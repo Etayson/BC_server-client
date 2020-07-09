@@ -318,5 +318,5 @@ End
 ; FirstLine = 9
 ; Folding = --
 ; EnableXP
-; Executable = merger.exe
+; Executable = ..\release\v1_0\merger.exe
 ; CommandLine = mmm.bin mmmmerge.bin mmmsave.bin
