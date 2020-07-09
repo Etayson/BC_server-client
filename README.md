@@ -11,7 +11,7 @@ Example: crackhelperServerX64.exe -range 8000000000:ffffffffff -dp 5 -map mmm.bi
 
 ## [crackhelperClient.exe] commands:
 ```
--prog filename    The name of bitckrack app without exe suffix
+-prog filename    The name of bitckrack app
 -name  NAME       Instance name for stats on server
 -pool host:port   Server host:port by default 127.0.0.1:8000
 -d N              GPU device id
