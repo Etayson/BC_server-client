@@ -52,3 +52,10 @@ If you are merge -dp 20 with -dp 22 then merger logic will be:
   <li>totaly you will have savingmap file with -dp 22 where already put scanned ranges from file with -dp 20</li>
 </ul>
 example of usage > merger.exe mmm.bin mmmmerge.bin mmmsave.bin
+
+## [extractor.exe] is needed to extract already scanned subranges to txt file.
+```
+-map  fileneame  Filename from which subranges extract
+-to   fileneame  Filename to where scanned subranges extracted
+```
+example of usage > extractor.exe -map map.bin -to sc.txt
