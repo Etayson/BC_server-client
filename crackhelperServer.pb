@@ -78,7 +78,7 @@ EndEnumeration
 #ADDRESSSIZE=34
 #HEADERSIZE=64+#ADDRESSSIZE+1
 #DATASIZE=65
-#APPVERSION="1.1alpha"
+#APPVERSION="1.1beta"
 
 #DatabaseFile="Personstate.db" 
 
@@ -316,7 +316,7 @@ Procedure.s genPOWaddress(rb$,re$)
   m_sethex32(*rb_l, @rb$,32)
   m_sethex32(*re_l, @re$,32)
   
-  randomkey=Random(subrangewidth,0)
+  randomkey=Random(subrangewidth-1,0)
   a$ = Hex(randomkey)
   m_sethex32(*rndkey, @a$,32)
   Curve::m_addModX64(*rndkey,*rb_l,*rndkey,*CurveP)  
@@ -1400,13 +1400,16 @@ getprogparam()
 
 
 settings("1")\deviderint=Int(Pow(2,settings("1")\divpow))
-Define result, quit = #False,  i, StratServ, Thread, lastlogtime, procname$ = "[MAIN] ", *genhelper,*Rangetotal, eachbitinrange, wholebitinrange
+Define result, quit = #False,  i, StratServ, Thread, lastlogtime, procname$ = "[MAIN] ", *genhelper,*Rangetotal, eachbitinrange, wholebitinrange, *temp,*temp2, tempv,a$
 
 *rangeB=AllocateMemory(32)
 *rangeE=AllocateMemory(32)
 *Rangetotal = AllocateMemory(32)
 *genhelper= AllocateMemory(32)
 *maxwidthsubrange = AllocateMemory(32)
+*temp = AllocateMemory(32)
+*temp2 = AllocateMemory(32)
+
 m_sethex32(*maxwidthsubrange, @"CCCCCCCCCCCCCCC", 32);--define max width of subrange
 
 settings("1")\maxbyte=Len(settings("1")\rangeE$)/2
@@ -1462,6 +1465,24 @@ If Curve::m_check_less_more_equilX64(*genhelper,*maxwidthsubrange)=2
 EndIf
 subrangewidth = PeekI(*genhelper)
 sprint("Subrange width  :"+Str(subrangewidth),#colorDarkgrey)
+
+;Check if subrange is power of two
+a$=Hex(subrangewidth+1)
+m_sethex32(*temp, @"0", 32)
+m_sethex32(*temp2, @a$, 32)
+tempv = settings("1")\deviderint
+While tempv  
+  Curve::m_addModX64(*temp,*temp,*temp2,*Curveqn) 
+  tempv-1  
+Wend
+m_sethex32(*temp2, @"1", 32)
+Curve::m_SubModX64(*temp,*temp,*temp2,*Curveqn) 
+
+If Curve::m_check_less_more_equilX64(*temp,*Rangetotal)<>0
+  sprint("Range is not power of two!!!", #colorRed)
+  Input()
+  End
+EndIf
 
 If cmpmapfile()
   sprint("Create new map ranges", #colorBrown)
@@ -1530,9 +1551,9 @@ Input()
 End
 ; IDE Options = PureBasic 5.31 (Windows - x64)
 ; ExecutableFormat = Console
-; CursorPosition = 80
-; FirstLine = 56
+; CursorPosition = 66
+; FirstLine = 60
 ; Folding = ------
 ; EnableXP
-; Executable = ..\release\v1_1alpha\crackhelperServerX64.exe
+; Executable = ..\release\v1_2beta\crackhelperServerX64.exe
 ; CommandLine = -range 2000000000:3fffffffff -dp 3 -map mmm.bin -address 122AJhKLEfkFBaGAd84pLp1kfE7xK3GdT8
