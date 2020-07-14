@@ -78,7 +78,7 @@ EndEnumeration
 #ADDRESSSIZE=34
 #HEADERSIZE=64+#ADDRESSSIZE+1
 #DATASIZE=65
-#APPVERSION="1.1"
+#APPVERSION="1.1alpha"
 
 #DatabaseFile="Personstate.db" 
 
@@ -1322,16 +1322,18 @@ Procedure Socket_Server(*Server.ServerStructure)
                       answer_f$ = LTrim(answer_f$,"{")                   
                       answer_f$ = "{"+answer_f$+"}"
                       
+                      LockMutex(socketreqMutex)
+                      
                       If MapSize(socketreq())=0
                         socketreqN = 0
                       EndIf
-                      LockMutex(socketreqMutex)
+                      
                       socketreq(Str(socketreqN))\id = socketreqN
                       socketreq(Str(socketreqN))\ClientId = ClientID
                       socketreq(Str(socketreqN))\req = answer_f$    
                       UnlockMutex(socketreqMutex)
-                      CreateThread(@AnaliseRequest(),socketreqN)
-                      
+                      ;CreateThread(@AnaliseRequest(),socketreqN)
+                      AnaliseRequest(socketreqN)
                       
                      
                       socketreqN+1
@@ -1528,9 +1530,9 @@ Input()
 End
 ; IDE Options = PureBasic 5.31 (Windows - x64)
 ; ExecutableFormat = Console
-; CursorPosition = 1521
-; FirstLine = 1486
+; CursorPosition = 80
+; FirstLine = 56
 ; Folding = ------
 ; EnableXP
-; Executable = crackhelperServerX64.exe
+; Executable = ..\release\v1_1alpha\crackhelperServerX64.exe
 ; CommandLine = -range 2000000000:3fffffffff -dp 3 -map mmm.bin -address 122AJhKLEfkFBaGAd84pLp1kfE7xK3GdT8
