@@ -316,7 +316,7 @@ Procedure.s genPOWaddress(rb$,re$)
   m_sethex32(*rb_l, @rb$,32)
   m_sethex32(*re_l, @re$,32)
   
-  randomkey=Random(subrangewidth-1,0)
+  randomkey=Random(subrangewidth,0)
   a$ = Hex(randomkey)
   m_sethex32(*rndkey, @a$,32)
   Curve::m_addModX64(*rndkey,*rb_l,*rndkey,*CurveP)  
@@ -1382,6 +1382,7 @@ Procedure timer60s(i)
   Wend
 EndProcedure
 
+
 Define *maxwidthsubrange
 UseSQLiteDatabase() 
 OpenConsole()
@@ -1468,15 +1469,17 @@ sprint("Subrange width  :"+Str(subrangewidth),#colorDarkgrey)
 
 ;Check if subrange is power of two
 a$=Hex(subrangewidth+1)
-m_sethex32(*temp, @"0", 32)
-m_sethex32(*temp2, @a$, 32)
-tempv = settings("1")\deviderint
+m_sethex32(*temp, @a$, 32)
+tempv = settings("1")\divpow
 While tempv  
-  Curve::m_addModX64(*temp,*temp,*temp2,*Curveqn) 
-  tempv-1  
+  PrintN(m_gethex32(*temp, 32))
+  Curve::m_shlX64(*temp)
+  tempv-1 
 Wend
+
 m_sethex32(*temp2, @"1", 32)
 Curve::m_SubModX64(*temp,*temp,*temp2,*Curveqn) 
+PrintN(m_gethex32(*temp, 32))
 
 If Curve::m_check_less_more_equilX64(*temp,*Rangetotal)<>0
   sprint("Range is not power of two!!!", #colorRed)
@@ -1551,8 +1554,8 @@ Input()
 End
 ; IDE Options = PureBasic 5.31 (Windows - x64)
 ; ExecutableFormat = Console
-; CursorPosition = 66
-; FirstLine = 60
+; CursorPosition = 1553
+; FirstLine = 1463
 ; Folding = ------
 ; EnableXP
 ; Executable = ..\release\v1_2beta\crackhelperServerX64.exe
